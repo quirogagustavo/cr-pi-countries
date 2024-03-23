@@ -1,49 +1,84 @@
-const {Country,Activity} = require('../db')
-const {Op} = require('sequelize')
+const { Sequelize } = require("sequelize");
+const Op = Sequelize.Op;
+const { Countries, Activities } = require("../db");
 
+async function getAllCount(req, res) {
+  const { name } = req.query;
+  console.log('Esto viene en el query: ',name)
+  try {
+    if (!name) {
+      const countryAll = await Countries.findAll({ include: Activities});
+      res.send(countryAll);
+     } else {
+       const countryQuery = await Countries.findAll({
+         where: {
+           name: {
+             [Op.iLike]: `%${name}%`
+           },
+         },
+          include: Activities
+       });
 
-const allCountries = async(req,res)=>{
-    try{
-        const allCountry=await Country.findAll();
-        res.status(200).json(allCountry.map(pais=>pais.toJSON()))
-    } catch (error){
-        res.status(500).send(error)
-    }
+       if (!countryQuery[0]) {
+         console.log("error");
+
+         return res
+           .status(404)
+           .json({
+             error: ` no se encuentra ningun Pais con el nombre , ${name}`,
+           });
+       }
+       return res.send(countryQuery);
+     }
+  } catch (error) {
+    res.send(error);
+  }
 }
 
-const countryById=async (req,res)=>{
-    try{
-        const {idPais}=req.params
-        const country=await Country.findOne({
-            where: {
-                id: idPais.toUpperCase()
-            },
-            include: Activity
-        })
-        return res.stattus(200).json(country)
+async function GetCountryId(req, res) {
+  try {
+    const idpais = req.params.idPais.toUpperCase();
+    // console.log(idpais)
+    const country = await Countries.findOne({
+      where: {
+        id: idpais,
+      },
+      include: Activities,
+    });
 
-    } catch(error){
-        res.status(500).send(error)
-    }
+    return res.json(country);
+  } catch (error) {
+    res.send(error);
+  }
 }
 
-const countryByName=async (req,res)=>{
-   try{
-    const {pais}=req.query
-    const countries=Country.findAll({
-        where: {
-            name: {
-                [Op.like]: '%'+pais.toUpperCase()+'%'
-            }
-        }
-    })
-    if (!countries){
-        return res.status(200).send('No hay coincidencias para el pais especificado')
-    }
-    return res.status(200).json(countries)
+// async function GetCountryName(req,res) {
+//   const { name } = req.query;
+//   console.log('Esto viene en el query: ',name)
+//   try {
+    
+//       const countryQuery = await Countries.findAll({
+//         where: {
+//           name: {
+//             [Op.iLike]: `%${name}%`
+//           },
+//         },
+//          include: Activities
+//       });
+//       if (!countryQuery[0]) {
+//         console.log("error");
 
-} catch(error){
-    res.status(500).send(error)
-}
-}
-module.exports={allCountries,countryById,countryByName}
+//         return res
+//           .status(404)
+//           .json({
+//             error: ` no se encuentra ningun Pais con el nombre , ${name}`,
+//           });
+//       }
+//       return res.send(countryQuery);
+    
+//   } catch (error) {
+//     res.send(error);
+//   }
+// }
+
+module.exports = { getAllCount, GetCountryId};
