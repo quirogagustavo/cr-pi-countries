@@ -7,8 +7,9 @@ async function getAllCount(req, res) {
   console.log('Esto viene en el query: ',name)
   try {
     if (!name) {
+      console.log('Retorno todo')
       const countryAll = await Countries.findAll({ include: Activities});
-      res.send(countryAll);
+      res.status(200).json(countryAll);
      } else {
        const countryQuery = await Countries.findAll({
          where: {
@@ -28,7 +29,7 @@ async function getAllCount(req, res) {
              error: ` no se encuentra ningun Pais con el nombre , ${name}`,
            });
        }
-       return res.send(countryQuery);
+       return res.status(200).json(countryQuery);
      }
   } catch (error) {
     res.send(error);

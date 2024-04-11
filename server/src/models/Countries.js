@@ -32,7 +32,7 @@ module.exports = (sequelize) => {
       type: DataTypes.DECIMAL
     },
     poblacion: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL,
       allowNull:false
     }
   });

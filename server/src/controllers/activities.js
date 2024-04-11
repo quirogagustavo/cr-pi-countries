@@ -44,7 +44,7 @@ async function newAct(req, res) {
     //Crear la actividad en la tabla Activity
     //Validar que el name exista, si existe el name
     //actuasliza en la tabla con los valores enviados.
-    console.log(nombre, ' ', dificultad,' ',countryId)
+    //console.log(nombre, ' ', dificultad,' ',countryId)
     const [actividad,creada]=await Activities.findOrCreate({where:{nombre:nombre},
     defaults: {dificultad: parseInt(dificultad), duracion: parseInt(duracion), temporada: temporada}})
     //console.log(actividad)
@@ -54,10 +54,10 @@ async function newAct(req, res) {
     //Recorrer el arreglo de Country, validar que exista
     //y agregar en la asociacion el idCountry y idActivity
      
-    console.log(actividad)
+    //console.log(actividad)
      countryId.forEach(async (element) => {
          //Validar que existe el id del pais
-         console.log(element)
+         //console.log(element)
           const country=await Countries.findOne({where:{id:element}})
          //Si exite el country agrego en la asociacion de n a m 
          //el id de actividad y el id de cada pais
